@@ -1,4 +1,5 @@
 import chess.pgn
+import numpy as np
 from stockfish import Stockfish
 
 #Carrega o stockfish.
@@ -18,11 +19,34 @@ nome_pretas = primeiro_jogo.headers["Black"]
 tabuleiro = chess.Board()
 
 #Lista para guardar os lances
-lista_lances = []
+lista_lances_temporario = []
 
+num_lances = 0
+
+#for que percorre cada lance da linha principal do jogo
 for lance in primeiro_jogo.mainline_moves():
+    num_lances += 1
+    #coloca cada lance no tabuleiro
     tabuleiro.push(lance)
+    #entrega o tabuleiro (com a posição atual) pro stockfish
     stockfish.set_fen_position(tabuleiro.fen())
-    print(lance)
-    print(stockfish.get_evaluation())
+    lista_lances_temporario.append( [num_lances, (stockfish.get_evaluation())["value"]])
+
+#passando a lista para array numpy
+lista_lances = np.array(lista_lances_temporario)
+
+#aplicando oque eu aprendi sobre a biblioteca numpy
+avaliacao_media = np.mean(lista_lances[:, 1])
+volatibilidade = np.std(lista_lances[:, 1])
+
+#sempre do ponto de vista das brancas
+melhor_posicao = np.max(lista_lances[:, 1])
+pior_posicao = np.min(lista_lances[:, 1])
+
+print(lista_lances)
+
+print(avaliacao_media)
+print(volatibilidade)
+print(melhor_posicao)
+print(pior_posicao)
 
