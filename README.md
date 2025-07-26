@@ -4,27 +4,36 @@ Este projeto é um script em Python que utiliza as bibliotecas `python-chess`, `
 
 ## Descrição
 
-O objetivo principal deste script é extrair a avaliação em centipeões de cada lance de uma partida, armazenar esses dados e calcular métricas-chave como a vantagem média de cada jogador, a volatilidade do jogo e os picos de vantagem.
+O objetivo principal deste repositório é aplicar e aprimorar minhas habilidades em Python para Ciência de Dados, explorando o xadrez.
 
-Este projeto foi desenvolvido como parte dos meus estudos em Python para Ciência de Dados, apenas queria testar algumas coisas da biblioteca NumPy e também dar uma olhada em duas bibliotecas que tenho interesse em aprender mais sobre, que é a do chess e a do stockfish.
+O projeto começou com um script focado em extrair a avaliação em centipeões de cada lance de uma única partida (utilizando `python-chess` e `stockfish`). Agora, o escopo foi expandido para incluir uma análise exploratória de dados em um dataset com mais de 20.000 partidas, utilizando as bibliotecas `pandas` e `matplotlib`.
 
-## Funcionalidades Principais
+Este projeto foi desenvolvido como parte dos meus estudos em Python para Ciência de Dados, apenas quero testar algumas coisas da biblioteca NumPy, Pandas e também dar uma olhada em duas bibliotecas que tenho interesse em aprender mais sobre, que é a do chess e a do stockfish.
 
+#### Módulo 1: Análise de Partida Individual (com Stockfish)
 * Leitura de partidas de xadrez no formato PGN.
-* Análise lance a lance utilizando a engine Stockfish para obter a avaliações da posição em centipeões.
-* Armazenamento e manipulação dos dados de avaliação com a biblioteca NumPy.
-* Cálculo de estatísticas descritivas da partida (utilizando a biblioteca NumPy):
-    * Vantagem Média
-    * Volatilidade (Desvio Padrão)
-    * Melhor e Pior Posição (do ponto de vista das Brancas)
+* Análise lance a lance utilizando a engine Stockfish para obter a avaliação da posição.
+* Cálculo de estatísticas descritivas da partida:
+    * Vantagem Média de cada jogador.
+    * Volatilidade (Desvio Padrão) da partida.
+    * Melhor e Pior Posição para as Brancas.
 * Geração de um relatório de análise simples no console.
+
+#### Módulo 2: Análise de Dataset (com Pandas)
+* Carregamento e limpeza de um grande dataset de partidas (`.csv`).
+* Análise de popularidade das aberturas mais jogadas.
+* Cálculo das taxas de vitória, derrota e empate para diferentes aberturas.
+* Estudo da correlação entre o rating dos jogadores e suas escolhas.
+* Visualização de dados com `matplotlib` para apresentar os insights encontrados.
 
 ## Tecnologias Utilizadas
 
 * **Python 3.x**
-* **NumPy:** Para manipulação de arrays e cálculos estatísticos.
-* **python-chess:** Para leitura de arquivos PGN e manipulação do tabuleiro.
-* **stockfish:** Como interface para a engine de xadrez Stockfish.
+* **Pandas:**
+* **NumPy:**
+* **Matplotlib:**
+* **python-chess:** 
+* **stockfish:** 
 
 ## Instalação e Configuração
 
@@ -66,19 +75,33 @@ para o diretório onde você baixou a engine.
 
 ## Como Usar
 
-1.  Coloque o arquivo da partida que você deseja analisar na pasta raiz do projeto. O arquivo deve estar no formato PGN e nomeado assim: "chess_game_1.pgn".
-2.  Certifique-se de que o nome do arquivo no script (na linha `with open(...)`) corresponde ao nome do seu arquivo PGN, por isso recomendo nomear como "chess_game_1.pgn".
-3.  Execute o script através do terminal:
-```bash
-python xadrez_analises.py
-```
+O projeto é dividido em dois módulos de análise.
+
+#### Para Análise de Partida Individual:
+1.  Coloque um arquivo `.pgn` de sua escolha na pasta `data/`.
+2.  No script `src/analise_partida_individual.py`, ajuste o nome do arquivo na linha `with open(...)` e o caminho para o executável do Stockfish.
+3.  Execute o script:
+    ```bash
+    # Estando na pasta raiz do projeto
+    python src/analise_partida_individual.py
+    ```
+
+#### Para Análise do Dataset:
+1.  Certifique-se de que o arquivo `games.csv` está na pasta `data/`.
+2.  Execute o script de análise exploratória:
+    ```bash
+    # Estando na pasta raiz do projeto
+    python src/01_exploracao_inicial.py
+    ```
 
 ## Melhorias Futuras
 
-* [ ] Gerar um gráfico da avaliação ao longo da partida usando `matplotlib` quando eu aprender sobre ela.
-* [ ] Criar uma interface gráfica simples com `Tkinter` ou `PySimpleGUI`.
-* [ ] Criar um banco de partidas.
-* [ ] Com base no banco de dados, criar um bot daquele jogador.
+## Melhorias Futuras
+
+* [ ] **Módulo 1:** Gerar um gráfico da avaliação ao longo da partida individual usando `matplotlib`.
+* [ ] **Módulo 2:** Expandir a análise estatística do dataset, cruzando aberturas com as taxas de vitória e o rating dos jogadores.
+* [ ] **Módulo 2:** Criar um dashboard interativo com `Plotly` ou `Streamlit` para explorar as estatísticas das aberturas.
+* [ ] Criar uma interface gráfica simples com `Tkinter` ou `PySimpleGUI` para facilitar a análise de partidas individuais.
 
 Talvez:
 * [ ] Mostrar a precisão das partidas (isso é mais difícil do que parece, pois envolve conceitos mais avançados de Machine Learning e estatística)
