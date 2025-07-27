@@ -1,62 +1,71 @@
+# src/analise_partida_individual.py
+
 import chess.pgn
 import numpy as np
 import pandas as pd
 import plotly.express as px
 from stockfish import Stockfish
 
-#Carrega o stockfish.
-stockfish = Stockfish(path="D:/stockfish/stockfish/stockfish-windows-x86-64-avx2.exe")
-stockfish.update_engine_parameters({"Hash": 4096})
+def analisar_partida(caminho_pgn, caminho_stockfish):
+    try:
+        # Inicializando a engine do Stockfish
+        stockfish = Stockfish(path=caminho_stockfish)
+        #Mexa no hash abaixo para deixar o stockfish mais potente. Se eu não me engano está relacionada a quanta RAM vc vai estar disponibilizando
+        stockfish.update_engine_parameters({"Hash": 8192})
 
+        # Carregando o pgn da partida
+        with open(caminho_pgn) as pgn:
+            primeiro_jogo = chess.pgn.read_game(pgn)
 
-#Carrega o pgn da partida
-with open("../data/chess_game_1.pgn") as pgn:
-    primeiro_jogo = chess.pgn.read_game(pgn)
+        nome_brancas = primeiro_jogo.headers.get("White", "Brancas")
+        nome_pretas = primeiro_jogo.headers.get("Black", "Pretas")
 
-#Salva o nome dos jogadores
-nome_brancas = primeiro_jogo.headers["White"]
-nome_pretas = primeiro_jogo.headers["Black"]
+        tabuleiro = chess.Board()
+        lista_lances_temporario = []
+        num_lances = 0
 
-#usando a biblioteca do chess para criar um tabuleiro
-tabuleiro = chess.Board()
+        # Percorre cada lance da linha principal da partida
+        for lance in primeiro_jogo.mainline_moves():
+            num_lances += 1
+            tabuleiro.push(lance)
+            stockfish.set_fen_position(tabuleiro.fen())
+            avaliacao = stockfish.get_evaluation()["value"]
+            lista_lances_temporario.append([num_lances, avaliacao])
 
-#Lista para guardar os lances
-lista_lances_temporario = []
+        # Passando a lista para array numpy
+        lista_lances = np.array(lista_lances_temporario)
 
-num_lances = 0
+        # --- Cálculo das Estatísticas ---
+        status = {
+            "media": np.mean(lista_lances[:, 1]),
+            "volatilidade": np.std(lista_lances[:, 1]),
+            "melhor_posicao": np.max(lista_lances[:, 1]),
+            "pior_posicao": np.min(lista_lances[:, 1])
+        }
 
-#for que percorre cada lance da linha principal do jogo
-for lance in primeiro_jogo.mainline_moves():
-    num_lances += 1
-    #coloca cada lance no tabuleiro
-    tabuleiro.push(lance)
-    #entrega o tabuleiro (com a posição atual) pro stockfish
-    stockfish.set_fen_position(tabuleiro.fen())
-    lista_lances_temporario.append( [num_lances, (stockfish.get_evaluation())["value"]])
+        #Criando o Gráfico com Plotly
+        df_partida = pd.DataFrame(lista_lances, columns=['Lance', 'Avaliacao_CP'])
+        
+        fig = px.line(df_partida, x='Lance', y='Avaliacao_CP', title=f'Avaliação da Partida: {nome_brancas} vs {nome_pretas}', labels={'Lance': 'Número do Lance', 'Avaliacao_CP': 'Avaliação (Centipeões)'}, markers=True)
+        fig.add_hline(y=0, line_dash="dash", line_color="gray")
+        
+        return fig, status
+    
+    except Exception as e:
+        print(f"Erro ao analisar a partida: {e}")
+        return None, None
 
-#passando a lista para array numpy
-lista_lances = np.array(lista_lances_temporario)
+# O bloco abaixo só será executado se você rodar este script diretamente. Aprendi isso aqui: https://youtu.be/KZpYtNtGxSU?si=05429KVsxutHoYbU.
+# Ele é necessário para exitar que o Streamlit execute ele ao importar a função acima.
+if __name__ == '__main__':
+    caminho_pgn_teste = '../data/chess_game_1.pgn'
+    caminho_stockfish_teste = "D:/stockfish/stockfish/stockfish-windows-x86-64-avx2.exe"
+    
+    figura_resultado, estatisticas_resultado = analisar_partida(caminho_pgn_teste, caminho_stockfish_teste)
 
-#aplicando oque eu aprendi sobre a biblioteca numpy
-avaliacao_media = np.mean(lista_lances[:, 1])
-volatibilidade = np.std(lista_lances[:, 1])
+    print("- Estatísticas da partida -")
+    for chave, valor in estatisticas_resultado.items():
+        print(f"{chave.capitalize()}: {valor:.2f}")
 
-#sempre do ponto de vista das brancas
-melhor_posicao = np.max(lista_lances[:, 1])
-pior_posicao = np.min(lista_lances[:, 1])
-
-# dataframe para visualização
-df_partida = pd.DataFrame(lista_lances, columns=['Lance', 'Avaliacao_CP'])
-
-#Criando o gráfico
-fig = px.line(df_partida, x='Lance', y='Avaliacao_CP', title=f'Avaliação da Partida: {nome_brancas} vs {nome_pretas}', labels={'Lance': 'Número do Lance', 'Avaliacao_CP': 'Avaliação (Centipeões)'}, markers=True
-)
-
-#Linha apenas para referência
-fig.add_hline(y=0, line_dash="dash", line_color="gray")
-fig.show()
-
-print(f"Avaliação Média: {avaliacao_media:.2f}")
-print(f"Volatilidade: {volatibilidade:.2f}")
-print(f"Melhor Posição (Brancas): {melhor_posicao}")
-print(f"Pior Posição (Brancas): {pior_posicao}")
+    print("Exibindo o gráfico interativo...")
+    figura_resultado.show()
