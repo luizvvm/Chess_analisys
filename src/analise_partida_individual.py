@@ -1,5 +1,7 @@
 import chess.pgn
 import numpy as np
+import pandas as pd
+import plotly.express as px
 from stockfish import Stockfish
 
 #Carrega o stockfish.
@@ -43,10 +45,18 @@ volatibilidade = np.std(lista_lances[:, 1])
 melhor_posicao = np.max(lista_lances[:, 1])
 pior_posicao = np.min(lista_lances[:, 1])
 
-print(lista_lances)
+# dataframe para visualização
+df_partida = pd.DataFrame(lista_lances, columns=['Lance', 'Avaliacao_CP'])
 
-print(avaliacao_media)
-print(volatibilidade)
-print(melhor_posicao)
-print(pior_posicao)
+#Criando o gráfico
+fig = px.line(df_partida, x='Lance', y='Avaliacao_CP', title=f'Avaliação da Partida: {nome_brancas} vs {nome_pretas}', labels={'Lance': 'Número do Lance', 'Avaliacao_CP': 'Avaliação (Centipeões)'}, markers=True
+)
 
+#Linha apenas para referência
+fig.add_hline(y=0, line_dash="dash", line_color="gray")
+fig.show()
+
+print(f"Avaliação Média: {avaliacao_media:.2f}")
+print(f"Volatilidade: {volatibilidade:.2f}")
+print(f"Melhor Posição (Brancas): {melhor_posicao}")
+print(f"Pior Posição (Brancas): {pior_posicao}")
