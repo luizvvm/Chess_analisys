@@ -51,15 +51,41 @@ if pagina == "Análise de Partida Individual":
 ###########################################################################
 #Página 2
 elif pagina == "Estatísticas de Aberturas":
-    st.header("Análise do Dataset de Partidas")
+    from sqlalchemy import create_engine
+    #precisamos dessa biblioteca aqui porque eu tive que encriptografar a senha
+    from urllib.parse import quote_plus
 
-    df = carregar_dados("data/games.csv", separador=',')
+    db_password_raw = "Postgre_vitor_vep07@" 
+    db_password_encoded = quote_plus(db_password_raw)
+    db_nome = "chess_db"
+    db_usuario = "postgres"
+    db_host = "127.0.0.1"
+    db_port = "5432"
+    DATABASE_URL = f"postgresql://{db_usuario}:{db_password_encoded}@{db_host}:{db_port}/{db_nome}"
 
+    # O @st.cache_data serve para não rodar a consulta ao banco de dados toda vez que o usuario mexe em um filtro
+    @st.cache_data
+    def carregar_dados_do_banco():
+        try:
+            engine = create_engine(DATABASE_URL)
+            # Executando uma consulta SQL para selecionar todos os dados da tabela "games"
+            df = pd.read_sql("SELECT * FROM games", engine)
+            return df
+        except Exception as e:
+            st.error(f"Erro ao conectar com o banco de dados: {e}")
+            return None
+
+    st.header("Análise do Dataset de Partidas (PostgreSQL)")
+
+    #carregando os dados do banco
+    df = carregar_dados_do_banco()
+
+    # Só continua se os dados foram carregados com sucesso
     if df is not None:
         st.dataframe(df.head())
-
-        # Gráfico de popularidade de aberturas
         st.subheader("Popularidade das Aberturas")
+        
+        # Usa a mesma função de antes para gerar o gráfico
         fig_aberturas = gerar_grafico_popularidade_aberturas(df)
 
         if fig_aberturas:
