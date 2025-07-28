@@ -6,7 +6,7 @@ Uma aplicação web interativa para análise e visualização de dados de partid
 
 Desenvolvi essa aplicação web apenas para fins didáticos. O objetivo é estudar NumPy, Pandas, Postgre, streamlit, Plotly e muito mais, conforme eu for aprendendo. Sendo assim, atualmente esse projeto é uma plataforma para analisar tanto partidas de xadrez individuais quanto um grande volume de jogos, mas isso pode mudar conforme eu for tendo ideias ou conforme eu for estudando outras tecnologias.
 
-Sobre a aplicação, ela se conecta a um banco de dados PostgreSQL, que armazena um dataset com mais de 20.000 partidas (link pro data set:), permitindo análises estatísticas sobre aberturas e performances dos jogadores.
+Sobre a aplicação, ela se conecta a um banco de dados PostgreSQL, que armazena um dataset com mais de 20.000 partidas (link pro data set: https://www.kaggle.com/datasets/datasnaek/chess), permitindo análises estatísticas sobre aberturas e performances dos jogadores.
 
 ### Funcionalidades Principais
 
