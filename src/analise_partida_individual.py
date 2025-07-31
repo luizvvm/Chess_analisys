@@ -35,12 +35,8 @@ def analisar_partida(caminho_pgn, caminho_stockfish):
         # Passando a lista para array numpy
         lista_lances = np.array(lista_lances_temporario)
 
-        # --- Cálculo das Estatísticas ---
-        status = {
-            "media": np.mean(lista_lances[:, 1]),
-            "volatilidade": np.std(lista_lances[:, 1]),
-            "melhor_posicao": np.max(lista_lances[:, 1]),
-            "pior_posicao": np.min(lista_lances[:, 1])
+        # Cálculando as Estatísticas
+        status = {"media": np.mean(lista_lances[:, 1]), "volatilidade": np.std(lista_lances[:, 1]), "melhor_posicao": np.max(lista_lances[:, 1]), "pior_posicao": np.min(lista_lances[:, 1])
         }
 
         #Criando o Gráfico com Plotly
