@@ -1,40 +1,59 @@
-# Analisador de Partidas de Xadrez com Python
+# Chess Analysis Dashboard
 
-Este projeto é um script em Python que utiliza as bibliotecas `python-chess`, `numpy` e a engine `stockfish` para realizar uma análise estatística de uma partida de xadrez a partir de um arquivo PGN, um projeto feito para estudos.
+Uma aplicação web interativa para análise e visualização de dados de partidas de xadrez, construída com Python, Streamlit e PostgreSQL.
 
-## Descrição
+## Sobre o Projeto
 
-O objetivo principal deste repositório é aplicar e aprimorar minhas habilidades em Python para Ciência de Dados, explorando o xadrez.
+Desenvolvi essa aplicação web apenas para fins didáticos. O objetivo é estudar NumPy, Pandas, Postgre, streamlit, Plotly e muito mais, conforme eu for aprendendo. Sendo assim, atualmente esse projeto é uma plataforma para analisar tanto partidas de xadrez individuais quanto um grande volume de jogos, mas isso pode mudar conforme eu for tendo ideias ou conforme eu for estudando outras tecnologias.
 
-O projeto começou com um script focado em extrair a avaliação em centipeões de cada lance de uma única partida (utilizando `python-chess` e `stockfish`). Agora, o escopo foi expandido para incluir uma análise exploratória de dados em um dataset com mais de 20.000 partidas, utilizando as bibliotecas `pandas` e `matplotlib`.
+Sobre a aplicação, ela se conecta a um banco de dados PostgreSQL, que armazena um dataset com mais de 20.000 partidas (link pro data set: https://www.kaggle.com/datasets/datasnaek/chess), permitindo análises estatísticas sobre aberturas e performances dos jogadores.
 
-Este projeto foi desenvolvido como parte dos meus estudos em Python para Ciência de Dados, apenas quero testar algumas coisas da biblioteca NumPy, Pandas e também dar uma olhada em duas bibliotecas que tenho interesse em aprender mais sobre, que é a do chess e a do stockfish.
+### Funcionalidades Principais
 
-#### Módulo 1: Análise de Partida Individual (com Stockfish)
-* Leitura de partidas de xadrez no formato PGN.
-* Análise lance a lance utilizando a engine Stockfish para obter a avaliação da posição.
-* Cálculo de estatísticas descritivas da partida:
-    * Vantagem Média de cada jogador.
-    * Volatilidade (Desvio Padrão) da partida.
-    * Melhor e Pior Posição para as Brancas.
-* Geração de um relatório de análise simples no console.
-
-#### Módulo 2: Análise de Dataset (com Pandas)
-* Carregamento e limpeza de um grande dataset de partidas (`.csv`).
-* Análise de popularidade das aberturas mais jogadas.
-* Cálculo das taxas de vitória, derrota e empate para diferentes aberturas.
-* Estudo da correlação entre o rating dos jogadores e suas escolhas.
-* Visualização de dados com `matplotlib` para apresentar os insights encontrados.
+* *Dashboard Interativo:* Interface web desenvolvida com Streamlit, permitindo a navegação entre diferentes módulos de análise.
+* *Análise de Partida Individual:* Permite o upload de um arquivo PGN para uma análise detalhada lance a lance, utilizando a engine Stockfish para obter a avaliação de cada posição da sua partida.
+* *Visualização Dinâmica:* Gráficos interativos gerados com Plotly que exibem a vantagem em centipeões ao longo da partida.
+* *Estatísticas do Dataset:* Análise de um grande conjunto de dados para explorar a popularidade e as taxas de vitória das aberturas de xadrez mais comuns (pelo menos do Lichess).
+* *Backend com Banco de Dados:* Utilização do PostgreSQL como sistema de gerenciamento de banco de dados para armazenar e consultar os dados das partidas de forma eficiente.
 
 ## Tecnologias Utilizadas
 
-* **Python 3.x**
-* **Pandas:**
-* **NumPy:**
-* **Matplotlib:**
-* **python-chess:** 
-* **stockfish:** 
+| Categoria                | Tecnologia                                           |
+| ------------------------ | ---------------------------------------------------- |
+| *Linguagem* | Python 3                                             |
+| *Backend* | PostgreSQL, SQLAlchemy                               |
+| *Frontend de Dados* | Streamlit, Plotly                                    |
+| *Análise de Dados* | Pandas, NumPy                                        |
+| *Motor de Xadrez* | python-chess, stockfish                          |
+| *Ferramentas* | Git, GitHub, Ambientes Virtuais (venv)             |
 
+## Instalação e Execução
+
+Para executar este projeto em sua máquina local, siga os passos abaixo.
+
+### Pré-requisitos
+
+* Python 3.8 ou superior
+* Git
+* PostgreSQL instalado e em execução na máquina.
+* Executável da engine Stockfish.
+
+### 1. Configuração do Ambiente
+
+Primeiro, clone o repositório e configure o ambiente virtual Python.
+
+```bash
+# Clone o repositório
+git clone [https://github.com/luizvvm/Chess_analisys.git](https://github.com/luizvvm/Chess_analisys.git)
+cd Chess_analisys
+
+# Crie e ative o ambiente virtual
+# No Windows:
+python -m venv venv
+.\venv\Scripts\activate
+
+# Instale as dependências do projeto
+pip install -r requirements.txt
 ## Instalação e Configuração
 
 Para rodar este projeto em sua máquina local, siga os passos abaixo:
@@ -73,38 +92,32 @@ stockfish = Stockfish(path="D:\\stockfish\\stockfish\\stockfish-windows-x86-64-a
 ```
 para o diretório onde você baixou a engine.
 
-## Como Usar
+### 5. Configuração do Banco de Dados
 
-O projeto é dividido em dois módulos de análise.
+A aplicação utiliza um banco de dados PostgreSQL para armazenar os dados das partidas.
 
-#### Para Análise de Partida Individual:
-1.  Coloque um arquivo `.pgn` de sua escolha na pasta `data/`.
-2.  No script `src/analise_partida_individual.py`, ajuste o nome do arquivo na linha `with open(...)` e o caminho para o executável do Stockfish.
-3.  Execute o script:
+1.  **Crie o Banco de Dados:** Crie um novo banco de dados chamado `chess_db`.
+2.  **Configure a Senha:** Abra o arquivo `src/ingest_data.py` e modifique a variável `db_password_raw` com a senha do seu usuário.
+3.  **Popule o Banco de Dados:** Execute o script de ingestão de dados. Este comando precisa ser executado apenas uma vez, mas também não vai dar problema se você executar outra vez sem querer.
     ```bash
-    # Estando na pasta raiz do projeto
-    python src/analise_partida_individual.py
+    # Estando na pasta raiz do projeto, com o venv ativo
+    python src/ingest_data.py
     ```
 
-#### Para Análise do Dataset:
-1.  Certifique-se de que o arquivo `games.csv` está na pasta `data/`.
-2.  Execute o script de análise exploratória:
+### 6. Execução da Aplicação
+
+1.  **Configure os Caminhos:** Abra o arquivo `app.py` e ajuste a variável `caminho_stockfish` aqui também. Ajuste também a senha do banco de dados neste arquivo.
+2.  **Inicie o Dashboard:** Com o venv ainda ativo, execute o seguinte comando:
     ```bash
-    # Estando na pasta raiz do projeto
-    python src/01_exploracao_inicial.py
+    streamlit run app.py
     ```
+A aplicação será aberta automaticamente no seu navegador.
 
 ## Melhorias Futuras
 
-## Melhorias Futuras
-
-* [ ] **Módulo 1:** Gerar um gráfico da avaliação ao longo da partida individual usando `matplotlib`.
-* [ ] **Módulo 2:** Expandir a análise estatística do dataset, cruzando aberturas com as taxas de vitória e o rating dos jogadores.
-* [ ] **Módulo 2:** Criar um dashboard interativo com `Plotly` ou `Streamlit` para explorar as estatísticas das aberturas.
-* [ ] Criar uma interface gráfica simples com `Tkinter` ou `PySimpleGUI` para facilitar a análise de partidas individuais.
-
-Talvez:
 * [ ] Mostrar a precisão das partidas (isso é mais difícil do que parece, pois envolve conceitos mais avançados de Machine Learning e estatística)
+      
+Pensarei em mais coisas conforme eu for estudando.
 
 ## Licença
 
